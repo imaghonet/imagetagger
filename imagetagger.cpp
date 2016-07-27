@@ -5,7 +5,7 @@
 #define CC std::cout << 
 
 const int MAX_PIXELS_TO_COUNT = 1000000; // If the area of a picture is bigger than MAX_PIXELS_TO?_COUNT it will omit some of pixels to fit
-
+const int MAX_AMOUNT_OF_IDS = 1000; //
 
 const int NUMBER_OF_COLORS = 9; //in hsl red is bot at the begging and at the end
 const int COLOR_VALUES[] = {0, 16, 46, 71, 146, 190, 261, 291, 345, 370};
@@ -28,7 +28,7 @@ const std::string GRAY_SCALE[] = {
 
 const std::string TINT = "with a tint of";
 
-int colorIdCount[1000] = {};
+int colorIdCount[MAX_AMOUNT_OF_IDS] = {};
 
 struct HSL{
 	int h; //   0 - 360
@@ -151,7 +151,7 @@ std::string idToColorName(int id){
 int main (int argc, char** argv){
 	
 	if (argc < 2){ // No argument with image directory
-		std::cout << "No image was given!\n";
+		std::cout << "ERROR: No image was given!\n";
 		return -1;
 	}
 	
@@ -159,7 +159,7 @@ int main (int argc, char** argv){
 	cv::Mat image = cv::imread(argv[1], CV_LOAD_IMAGE_UNCHANGED);
 	
 	if (image.empty()){
-		std::cout << "There is no such image!\n";
+		std::cout << "ERROR: There is no such image!\n";
 		return -1;
 	}	
 	
@@ -181,6 +181,10 @@ int main (int argc, char** argv){
 						static_cast<int>(image.at<cv::Vec3b>(cv::Point(x,y))[1]),  //green
 						static_cast<int>(image.at<cv::Vec3b>(cv::Point(x,y))[0])));//blue
 			
+			if (colorId >= MAX_AMOUNT_OF_IDS){
+				std::cout << "ERROR: ID too high to be counted";
+				return -1;
+			}
 			
 			colorIdCount[colorId]++;
 			mostPlentifulColor = std::max(mostPlentifulColor, colorIdCount[colorId]);
