@@ -187,10 +187,9 @@ int main (int argc, char** argv){
 		}
 	}
 	
+	
 	bool first = 1;
 	int outputted=0;
-	
-	
 	
 	for (int& i : colorIdCount){
 		
