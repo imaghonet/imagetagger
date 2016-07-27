@@ -1,14 +1,20 @@
 # imagetagger
 Extract main color names from image
 
+---
+
 ### imagetagger requires installed:
 * OpenCV    [OpenCV web page](http://opencv.org/)
 * g++       
+
+---
 
 ### Usage:  
 
     imagetagger "IMAGE DIRECTORY"  
 program will output most dominant colors in an IMAGE in csv format
+
+---
 
 ### Installation:  
 After entering imagetagger directory use  
@@ -18,6 +24,8 @@ to compile imagetagger.cpp to imagetagger the standalone program
 
     sudo make install
 to compile imagetagger.cpp and put it to /usr/local/bin/imagetagger
+
+---
 
 ### Code Explanation
 1. imagetagger loads an image  
