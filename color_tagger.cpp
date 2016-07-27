@@ -1,32 +1,3 @@
-/* [] - no prefix
- * 
- * 1.. - red			346 h  15
- * 2.. - orange			 16 h  45
- * 3.. - yellow			 46 h  70
- * 4.. - green			 71	h 145
- * 5.. - cyan			146 h 190
- * 6.. - blue			190 h 260
- * 7.. - violet			261 h 290
- * 8.. - pink			291 h 345
- * 
- *
- * 0.0 - 0   s 10  shades of gray
- * 		010 - black			 0 l  16
- * 		020 - dark gray		17 l  33
- * 		030 - light gray	50 l  66
- * 		040 - white			83 l 100
- *
- * ..1 - 	with tint of 10 s  39
- * 		.21 - dark gray with tint of	0  l  49
- * 		.31 - light gray with tint of	50 l 101
- *
- * ..2 - [normal] 	40  s 100
- *		.12 - dark		0   l  33
- *		.22 - [normal]	34  l  65
- *		.32 - light		66  l 101
- *
- */
-
 #include "opencv2/opencv.hpp"
 #include <iostream>
 #include <algorithm>
