@@ -1,25 +1,24 @@
 SHELL=/bin/bash
-source := $(wildcard color_tagger*.cpp)
-out := $(source:%.cpp=%)
+CC := g++
+SOURCE := $(wildcard color_tagger*.cpp)
+OUT := $(SOURCE:%.cpp=%)
 
 
-all: $(out)
+all: $(OUT)
 .PHONY: all
 
 %: %.cpp
-	g++ -std=c++11 $< -o $@ `pkg-config --cflags --libs opencv`
-
+	$(CC) -std=c++11 $< -o $@ `pkg-config --cflags --libs opencv`
 
 clean:
-	chmod +w $(out)
-	rm $(out)
+	chmod +w $(OUT)
+	rm $(OUT)
 .PHONY: clean
 
-install: $(out) 
-	cp -t /usr/local/bin $(notdir $(out))
+install: $(OUT) 
+	cp -t /usr/local/bin $(notdir $(OUT))
 .PHONY: install
 
 uninstall:
-	rm $(addprefix /usr/local/bin/, $(out))
+	rm $(addprefix /usr/local/bin/, $(OUT))
 .PHONY: uninstall
-
