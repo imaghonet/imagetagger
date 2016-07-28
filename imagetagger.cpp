@@ -51,10 +51,10 @@ int hueToColor(int targetHue){
 		return false;
 	});
 	
-	if (it - COLORS.begin() >= 8){
+	if (it - COLORS.begin() + 1 >= 9){
 		return 1;
 	}
-	return it-COLORS.begin();
+	return it-COLORS.begin()+1;
 }
 
 HSL rgbToHsl(int r, int g, int b){
