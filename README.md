@@ -30,10 +30,13 @@ to compile imagetagger.cpp and put it to /usr/local/bin/imagetagger
 ### Code Explanation
 1. imagetagger loads an image  
 2. scans it pixel after pixel and if the size of the image is too big it skips some to fit in reasonable time limit
-3. changes the deafult BGR format of each pixel to HSL format
-4. imagetagger gives (with some approximation) each color an Id (by __hslToColorId()__)
-5. keeps count of every Id (in __colorIdCount__) 
-6. most dominant colorIds are converted to color names (by __idToColorName()__) and outputed
+3. in function __imageToPixels(cv::Mat*)__ it
+
+> 1. changes the deafult BGR format of each pixel to HSL format
+  2. imagetagger gives (with some approximation) each color an Id (by __hslToColorId(hsl)__)
+  3. keeps count of every Id (in __colorIdCount__) 
+
+4. most dominant colorIds are converted to color names (by __idToColorName(int)__) and outputed
 
 ### Default format of colorId and color names assigned to them
 
