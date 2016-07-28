@@ -12,7 +12,7 @@ Extract main color names from image
 ### Usage:  
 
     imagetagger "IMAGE DIRECTORY"  
-program will output most dominant colors in an IMAGE in csv format
+program will output most dominant colors in IMAGE in csv format
 
 ---
 
@@ -28,7 +28,7 @@ to compile imagetagger.cpp and put it to /usr/local/bin/imagetagger
 ---
 
 ### Code Explanation
-1. imagetagger loads an image  
+1. imagetagger loads image  
 2. scans it pixel after pixel and if the size of the image is too big it skips some to fit in reasonable time limit
 3. in function __imageToPixels(cv::Mat*)__ it
 
