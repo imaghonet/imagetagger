@@ -130,8 +130,7 @@ int hslToColorId(HSL hsl){
 		 }
 	 }
 }
-
-// TODO  
+ 
 std::string idToColorName(int id){
 	if (id % 10 == 0){
 		return GRAY_SCALE[((id/10)%10)-1];
