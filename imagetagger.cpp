@@ -1,24 +1,22 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
 #include <algorithm>
-
-#define CC std::cout << 
+#include <array>
 
 const int MAX_PIXELS_TO_COUNT = 1000000; // If the area of a picture is bigger than MAX_PIXELS_TO?_COUNT it will omit some of pixels to fit
 const int MAX_AMOUNT_OF_IDS = 1000; //
 
 const int NUMBER_OF_COLORS = 9; //in hsl red is bot at the begging and at the end
-const int COLOR_VALUES[] = {0, 16, 46, 71, 146, 190, 261, 291, 345, 370};
-
-const std::string COLOR_NAMES[] = {
-	"red",
-	"orange",
-	"yellow",
-	"green",
-	"cyan",
-	"blue",
-	"violet",
-	"pink"
+const std::array<std::pair<int, const std::string> , NUMBER_OF_COLORS > COLORS = {
+   std::make_pair( 15,  "red"),
+   std::make_pair( 45,  "orange"),
+   std::make_pair( 70,  "yellow"),
+   std::make_pair( 145, "green"),
+   std::make_pair( 189, "cyan"),
+   std::make_pair( 260, "blue"),
+   std::make_pair( 290, "violet"),
+   std::make_pair( 344, "pink"),
+   std::make_pair( 360, "red")
 };
 
 const int SHADES_OF_GRAY = 4;
@@ -42,17 +40,21 @@ struct HSL{
 	}
 };
 
-int hueToColor(int hue){
-	for (int i=0; i < NUMBER_OF_COLORS; i++){
-		if (COLOR_VALUES[i] <= hue && hue < COLOR_VALUES[i+1]){
-			i++;
-			if (i == NUMBER_OF_COLORS){
-				i=1;
-			}
-			return i;
+
+int hueToColor(int targetHue){
+	const std::pair<int, const std::basic_string<char> > *it = std::find_if(COLORS.begin(), COLORS.end(), [targetHue](std::pair<int, const std::string> color) -> bool{
+		auto maxHueValue = color.first;
+		auto colorName = color.second;
+		if (maxHueValue >= targetHue){
+			return true;
 		}
+		return false;
+	});
+	
+	if (it - COLORS.begin() >= 8){
+		return 1;
 	}
-	return 1;
+	return it-COLORS.begin();
 }
 
 HSL rgbToHsl(int r, int g, int b){
@@ -129,20 +131,20 @@ int hslToColorId(HSL hsl){
 	 }
 }
 
+// TODO  
 std::string idToColorName(int id){
 	if (id % 10 == 0){
 		return GRAY_SCALE[((id/10)%10)-1];
 	}else{
 		if (id% 10 == 1){
-			return GRAY_SCALE[((id/10)%10)-1] + " " + TINT + " " + COLOR_NAMES[(id/100)-1];
+			return GRAY_SCALE[((id/10)%10)-1] + " " + TINT + " " + COLORS[(id/100)-1].second;
 		}else{
 			if ((id/10)%10 == 1){
-				return "dark " + COLOR_NAMES[(id/100)-1];
+				return "dark " + COLORS[(id/100)-1].second;
 			}else if((id/10)%10 == 3) {
-				return "light " + COLOR_NAMES[(id/100)-1];
+				return "light " + COLORS[(id/100)-1].second;
 			}else{
-				CC id << "\n";
-				return COLOR_NAMES[(id/100)-1];
+				return COLORS[(id/100)-1].second;
 			}
 		}
 	}
