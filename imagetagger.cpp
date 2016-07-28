@@ -1,10 +1,9 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <array>
 
-const int MAX_PIXELS_TO_COUNT = 1000000; // If the area of a picture is bigger than MAX_PIXELS_TO?_COUNT it will omit some of pixels to fit
-const int MAX_AMOUNT_OF_IDS = 1000; //
 
 const int NUMBER_OF_COLORS = 9; //in hsl red is bot at the begging and at the end
 const std::array<std::pair<int, const std::string> , NUMBER_OF_COLORS > COLORS = {
@@ -26,7 +25,10 @@ const std::string GRAY_SCALE[] = {
 
 const std::string TINT = "with a tint of";
 
+const int MAX_AMOUNT_OF_IDS = 1000; //
 int colorIdCount[MAX_AMOUNT_OF_IDS] = {};
+
+const size_t MAX_IMAGE_SIZE = static_cast<size_t>(10 * 1 << 20);
 
 struct HSL{
 	int h; //   0 - 360
@@ -42,7 +44,7 @@ struct HSL{
 
 
 int hueToColor(int targetHue){
-	const std::pair<int, const std::basic_string<char> > *it = std::find_if(COLORS.begin(), COLORS.end(), [targetHue](std::pair<int, const std::string> color) -> bool{
+	const std::pair<int, const std::string > *it = std::find_if(COLORS.begin(), COLORS.end(), [targetHue](std::pair<int, const std::string> color) -> bool{
 		auto maxHueValue = color.first;
 		auto colorName = color.second;
 		if (maxHueValue >= targetHue){
@@ -130,7 +132,7 @@ int hslToColorId(HSL hsl){
 		 }
 	 }
 }
- 
+
 std::string idToColorName(int id){
 	if (id % 10 == 0){
 		return GRAY_SCALE[((id/10)%10)-1];
@@ -149,38 +151,17 @@ std::string idToColorName(int id){
 	}
 }
 
-int main (int argc, char** argv){
-	
-	if (argc < 2){ // No argument with image directory
-		std::cout << "ERROR: No image was given!\n";
-		return -1;
-	}
-	
-	
-	cv::Mat image = cv::imread(argv[1], CV_LOAD_IMAGE_UNCHANGED);
-	
-	if (image.empty()){
-		std::cout << "ERROR: There is no such image!\n";
-		return -1;
-	}	
-	
-	int pixelsToSkip=1;
-	int area = image.size().height * image.size().width;
-	
-	while (area/(pixelsToSkip * pixelsToSkip) > MAX_PIXELS_TO_COUNT)
-		pixelsToSkip++;
-		
-	
+int imageToPixels(const cv::Mat *image){
 	int mostPlentifulColor=0;
 	int colorId;
-	for (int y=0; y < image.size().height ; y+=pixelsToSkip){
-		for (int x=0; x < image.size().width; x+= pixelsToSkip){
+	for (int y=0; y < image->size().height ; y++){
+		for (int x=0; x < image->size().width; x++){
 			//OpenCV reads images in BGR format
 			colorId = hslToColorId(
 					rgbToHsl(
-						static_cast<int>(image.at<cv::Vec3b>(cv::Point(x,y))[2]),  //red
-						static_cast<int>(image.at<cv::Vec3b>(cv::Point(x,y))[1]),  //green
-						static_cast<int>(image.at<cv::Vec3b>(cv::Point(x,y))[0])));//blue
+						static_cast<int>(image->at<cv::Vec3b>(cv::Point(x,y))[2]),  //red
+						static_cast<int>(image->at<cv::Vec3b>(cv::Point(x,y))[1]),  //green
+						static_cast<int>(image->at<cv::Vec3b>(cv::Point(x,y))[0])));//blue
 			
 			if (colorId >= MAX_AMOUNT_OF_IDS){
 				std::cout << "ERROR: ID too high to be counted";
@@ -192,7 +173,41 @@ int main (int argc, char** argv){
 		}
 	}
 	
+	return mostPlentifulColor;
+}
+
+size_t fileSize(std::string imagePath){
+	std::ifstream image (imagePath, std::ios::binary|std::ios::ate);
+	auto end = image.tellg();
+	image.close();
+	return end;
+}
+
+int main (int argc, char** argv){
 	
+	//Fetching input image
+	if (argc < 2){ // No argument with image directory
+		std::cout << "ERROR: No image was given!\n";
+		return -1;
+	}
+	
+	if (static_cast<unsigned long long>(fileSize(argv[1])) > MAX_IMAGE_SIZE){
+		std::cout << "ERROR: Image size too bid!\n";
+		return -1;
+	}
+	
+	cv::Mat image = cv::imread(argv[1], CV_LOAD_IMAGE_UNCHANGED);
+	
+	if (image.empty()){
+		std::cout << "ERROR: There is no such image!\n";
+		return -1;
+	}	
+	
+	//Calculations
+	int mostPlentifulColor = imageToPixels(&image);
+	
+	
+	// Output
 	bool first = 1;
 	int outputted=0;
 	
@@ -200,7 +215,7 @@ int main (int argc, char** argv){
 		
 		if (i > (mostPlentifulColor*3)/4){
 			if (outputted >= 5){
-				return 0;
+				break;
 			}
 			if (first){
 				first = 0;
